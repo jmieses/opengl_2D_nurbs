@@ -10,7 +10,7 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-// check for branch visibilty in random_number_gen branch
+// 1. check for branch visibilty in random_number_gen branch
 
 int main()
 {
