@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <array>
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -115,11 +116,12 @@ void Normal_Distribution(float * sample) {
 void setupVertexData() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
 // ------------------------------------------------------------------
-    float vertices[12];
+    std::array<float, 12> vertices;
+
     for(int i = 0; i < 12; i++){
         float sample;
         Normal_Distribution(&sample);
-        vertices[i] = sample;
+        vertices.at(i) = sample;
     }
     //  = {
     //      0.5f,  0.5f, 0.0f,  // top right
@@ -139,7 +141,7 @@ void setupVertexData() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
