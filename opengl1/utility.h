@@ -83,15 +83,50 @@ void Draw(int shaderProgram) {
     // glBindVertexArray(0); // no need to unbind it every time 
 }
 
+#include <random>
+
+std::random_device rd;
+
+// Mersenne twister PRNG, initialized with seed from previous random device instance
+std::mt19937 gen(rd());
+
+void Normal_Distribution(float * sample) {
+    float mean;
+    float variance;
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
+    mean = distribution(generator);
+    variance = distribution(generator);
+
+
+
+    // instance of class std::normal_distribution with specific mean and stddev
+    std::normal_distribution<float> d(mean, variance);
+
+    // get random number with normal distribution using gen as random source
+    do {
+        *sample = d(gen);
+    } while (*sample > 1.0 || *sample < 0);
+    
+}
+
 void setupVertexData() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
 // ------------------------------------------------------------------
-    float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    };
+    float vertices[12];
+    for(int i = 0; i < 12; i++){
+        float sample;
+        Normal_Distribution(&sample);
+        vertices[i] = sample;
+    }
+    //  = {
+    //      0.5f,  0.5f, 0.0f,  // top right
+    //      0.5f, -0.5f, 0.0f,  // bottom right
+    //     -0.5f, -0.5f, 0.0f,  // bottom left
+    //     -0.5f,  0.5f, 0.0f   // top left 
+    // };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
