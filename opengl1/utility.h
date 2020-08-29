@@ -28,6 +28,29 @@ char infoLog[512];
 
 unsigned int VBO, VAO, EBO;
 
+std::array<float, 12> vertices;
+
+
+/*Local Function Definitions*/
+void Normal_Distribution(float*);
+
+/*Update vertices after x number of seconds*/
+#include <time.h>
+
+bool Wait_Seconds(float seconds){
+    float timeDelta = 0;
+    clock_t clk = clock(), temp;
+
+    while (timeDelta <= seconds)
+    {
+        temp = clock() - clk;
+        clk = clock();
+        timeDelta += (float)((float)temp / CLOCKS_PER_SEC);
+    }
+
+    return true;
+}
+
 void buildShader(int vertexShader, int fragmentShader) {
     
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -72,7 +95,8 @@ void linkShader(int vertexShader, int fragmentShader, int shaderProgram) {
 
 void Draw(int shaderProgram) {
     // render
-// ------
+    // ------
+    
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -81,7 +105,14 @@ void Draw(int shaderProgram) {
     glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    // glBindVertexArray(0); // no need to unbind it every time 
+    //glBindVertexArray(0); // no need to unbind it every time 
+    for (int i = 0; i < 12; i++) {
+        float sample;
+        Normal_Distribution(&sample);
+        vertices.at(i) = sample;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
 }
 
 #include <random>
@@ -109,26 +140,20 @@ void Normal_Distribution(float * sample) {
     // get random number with normal distribution using gen as random source
     do {
         *sample = d(gen);
-    } while (*sample > 1.0 || *sample < 0);
-    
+    } while (*sample > 1.0 || *sample < -1.0);
 }
 
 void setupVertexData() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
 // ------------------------------------------------------------------
-    std::array<float, 12> vertices;
 
-    for(int i = 0; i < 12; i++){
-        float sample;
-        Normal_Distribution(&sample);
-        vertices.at(i) = sample;
-    }
-    //  = {
-    //      0.5f,  0.5f, 0.0f,  // top right
-    //      0.5f, -0.5f, 0.0f,  // bottom right
-    //     -0.5f, -0.5f, 0.0f,  // bottom left
-    //     -0.5f,  0.5f, 0.0f   // top left 
-    // };
+    
+    vertices  = {
+          0.5f,  0.5f, 0.0f,  // top right
+          0.5f, -0.5f, 0.0f,  // bottom right
+         -0.5f, -0.5f, 0.0f,  // bottom left
+         -0.5f,  0.5f, 0.0f   // top left 
+     };
     unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
@@ -141,10 +166,12 @@ void setupVertexData() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
