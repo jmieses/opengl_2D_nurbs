@@ -5,6 +5,15 @@
 
 #include <iostream>
 #include <array>
+#include <random>
+
+/*Size of vertices array, contains the number of points to displayed*/
+const unsigned int VERTICES_SIZE = 12;
+
+std::random_device rd;
+
+// Mersenne twister PRNG, initialized with seed from previous random device instance
+std::mt19937 gen(rd());
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -28,27 +37,29 @@ char infoLog[512];
 
 unsigned int VBO, VAO, EBO;
 
-std::array<float, 12> vertices;
+std::array<float, VERTICES_SIZE> vertices;
 
 
 /*Local Function Definitions*/
 void Normal_Distribution(float*);
+void Update_Vertices(void);
 
 /*Update vertices after x number of seconds*/
-#include <time.h>
+#include <thread>
 
-bool Wait_Seconds(float seconds){
-    float timeDelta = 0;
-    clock_t clk = clock(), temp;
+void Update_Vertices(void) {
 
-    while (timeDelta <= seconds)
-    {
-        temp = clock() - clk;
-        clk = clock();
-        timeDelta += (float)((float)temp / CLOCKS_PER_SEC);
+    double current_time = glfwGetTime();
+    static double old_time = current_time;
+  
+    if (current_time != 0.0 && (current_time - old_time) > 5.0) {
+        for (int i = 0; i < VERTICES_SIZE; i++) {
+            float sample;
+            Normal_Distribution(&sample);
+            vertices.at(i) = sample;
+        }
+        old_time = current_time;
     }
-
-    return true;
 }
 
 void buildShader(int vertexShader, int fragmentShader) {
@@ -106,21 +117,13 @@ void Draw(int shaderProgram) {
     //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //glBindVertexArray(0); // no need to unbind it every time 
-    for (int i = 0; i < 12; i++) {
-        float sample;
-        Normal_Distribution(&sample);
-        vertices.at(i) = sample;
-    }
+    
+    Update_Vertices();
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
 }
 
-#include <random>
 
-std::random_device rd;
-
-// Mersenne twister PRNG, initialized with seed from previous random device instance
-std::mt19937 gen(rd());
 
 void Normal_Distribution(float * sample) {
     float mean;
