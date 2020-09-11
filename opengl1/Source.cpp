@@ -3,6 +3,8 @@
 #include "utility.h"
 #include <iostream>
 
+#include "Error_Handling.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -17,8 +19,8 @@ int main()
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -45,6 +47,10 @@ int main()
         return -1;
     }
 
+    // During init, enable debug output
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(MessageCallback, 0);
+
     int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     int shaderProgram = glCreateProgram();
@@ -55,7 +61,7 @@ int main()
 
     setupVertexData();
 
-
+    std::cout << glGetString(GL_VERSION) << '\n';
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))

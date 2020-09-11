@@ -26,5 +26,8 @@
     <ClInclude Include="utility.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Error_Handling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
