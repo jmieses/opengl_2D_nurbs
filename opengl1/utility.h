@@ -123,9 +123,7 @@ void Draw(int shaderProgram, VertexBuffer * vb) {
     //glBindVertexArray(0); // no need to unbind it every time 
     
     Update_Vertices();
-    vb->setData(&vertices, VERTICES_SIZE);
-    //glBindBuffer(GL_ARRAY_BUFFER, vb->getID());
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+    vb->setData(&vertices, sizeof(vertices));
 }
 
 
