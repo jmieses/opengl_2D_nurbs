@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Error_Handling.h" />
     <ClInclude Include="utility.h" />
+    <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

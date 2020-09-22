@@ -3,6 +3,7 @@
 #include "utility.h"
 #include <iostream>
 
+#include "VertexBuffer.h"
 #include "Error_Handling.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -59,9 +60,13 @@ int main()
 
     linkShader(vertexShader, fragmentShader, shaderProgram);
 
+    VertexBuffer vertex_buffer(&vertices, sizeof(vertices));
+
     setupVertexData();
 
     std::cout << glGetString(GL_VERSION) << '\n';
+
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -80,10 +85,10 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteBuffers(1, &EBO);
+    // glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
