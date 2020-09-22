@@ -75,7 +75,7 @@ int main()
         // -----
         processInput(window);
 
-        Draw(shaderProgram);
+        Draw(shaderProgram, &vertex_buffer);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

@@ -17,10 +17,21 @@ VertexBuffer::~VertexBuffer()
 
 void VertexBuffer::Bind() const
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertex_buffer_id);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer_id);
 }
 
 void VertexBuffer::Unbind() const
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VertexBuffer::setData(const void * vertices, unsigned int size_of_vertices)
+{
+	this->Bind();
+	glBufferData(GL_ARRAY_BUFFER, size_of_vertices, vertices, GL_DYNAMIC_DRAW);
+}
+
+void VertexBuffer::setID(unsigned int id) 
+{
+	m_vertex_buffer_id = id;
 }

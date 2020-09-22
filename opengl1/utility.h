@@ -7,6 +7,7 @@
 #include <array>
 #include <random>
 
+#include "VertexBuffer.h"
 /*Size of vertices array, contains the number of points to displayed*/
 const unsigned int VERTICES_SIZE = 12;
 
@@ -48,7 +49,7 @@ std::array<float, VERTICES_SIZE> vertices {
 /*Local Function Definitions*/
 void Normal_Distribution(float*);
 void Update_Vertices(void);
-
+void Draw(int, VertexBuffer*);
 
 void Update_Vertices(void) {
 
@@ -107,7 +108,7 @@ void linkShader(int vertexShader, int fragmentShader, int shaderProgram) {
     glDeleteShader(fragmentShader);
 }
 
-void Draw(int shaderProgram) {
+void Draw(int shaderProgram, VertexBuffer * vb) {
     // render
     // ------
     
@@ -121,9 +122,10 @@ void Draw(int shaderProgram) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //glBindVertexArray(0); // no need to unbind it every time 
     
-    // Update_Vertices();
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
+    Update_Vertices();
+    vb->setData(&vertices, VERTICES_SIZE);
+    //glBindBuffer(GL_ARRAY_BUFFER, vb->getID());
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
 }
 
 
