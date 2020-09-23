@@ -63,7 +63,7 @@ int main()
 
     VertexBuffer vertex_buffer(&vertices, sizeof(vertices));
 
-	glGenVertexArrays(1, &VAO);
+	glGenVertexArrays(1, &VAO); // VAO has to be created and bind before the index buffer is call.
 	glBindVertexArray(VAO);
 	IndexBuffer index_buffer(indices, 6);
 	setupVertexData();
