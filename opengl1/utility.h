@@ -43,8 +43,12 @@ std::array<float, VERTICES_SIZE> vertices {
           0.5f, -0.5f, 0.0f,  // bottom right
          -0.5f, -0.5f, 0.0f,  // bottom left
          -0.5f,  0.5f, 0.0f   // top left 
-     };;
+     };
 
+unsigned int indices[] = {  // note that we start from 0!
+	0, 1, 3,  // first Triangle
+	1, 2, 3   // second Triangle
+};
 
 /*Local Function Definitions*/
 void Normal_Distribution(float*);
@@ -151,30 +155,7 @@ void Normal_Distribution(float * sample) {
 
 void setupVertexData() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
-// ------------------------------------------------------------------
- 
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-    // glGenBuffers(1, &VBO);
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
-
-    glGenVertexArrays(1, &VAO);
-
-    
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    
- 
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// ------------------------------------------------------------------
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);

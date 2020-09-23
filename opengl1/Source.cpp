@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "VertexBuffer.h"
+#include "IndexBuffer.h"
 #include "Error_Handling.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -62,7 +63,10 @@ int main()
 
     VertexBuffer vertex_buffer(&vertices, sizeof(vertices));
 
-    setupVertexData();
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	IndexBuffer index_buffer(indices, 6);
+	setupVertexData();
 
     std::cout << glGetString(GL_VERSION) << '\n';
 

@@ -152,11 +152,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Error_Handling.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
