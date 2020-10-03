@@ -5,6 +5,8 @@
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "VertexArray.h"
 #include "Error_Handling.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -60,13 +62,16 @@ int main()
     buildShader(vertexShader, fragmentShader);
 
     linkShader(vertexShader, fragmentShader, shaderProgram);
+    
+    VertexArray vertex_array;
 
     VertexBuffer vertex_buffer(&vertices, sizeof(vertices));
 
-	glGenVertexArrays(1, &VAO); // VAO has to be created and bind before the index buffer is call.
-	glBindVertexArray(VAO);
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    vertex_array.AddBuffer(vertex_buffer, layout);
+
 	IndexBuffer index_buffer(indices, 6);
-	setupVertexData();
 
     std::cout << glGetString(GL_VERSION) << '\n';
 
@@ -79,7 +84,7 @@ int main()
         // -----
         processInput(window);
 
-        Draw(shaderProgram, &vertex_buffer);
+        Draw(shaderProgram, vertex_array, vertex_buffer);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

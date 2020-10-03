@@ -8,6 +8,7 @@
 #include <random>
 
 #include "VertexBuffer.h"
+#include "VertexArray.h"
 /*Size of vertices array, contains the number of points to displayed*/
 const unsigned int VERTICES_SIZE = 12;
 
@@ -53,7 +54,7 @@ unsigned int indices[] = {  // note that we start from 0!
 /*Local Function Definitions*/
 void Normal_Distribution(float*);
 void Update_Vertices(void);
-void Draw(int, VertexBuffer*);
+void Draw(int, VertexArray&, VertexBuffer&);
 
 void Update_Vertices(void) {
 
@@ -112,7 +113,7 @@ void linkShader(int vertexShader, int fragmentShader, int shaderProgram) {
     glDeleteShader(fragmentShader);
 }
 
-void Draw(int shaderProgram, VertexBuffer * vb) {
+void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
     // render
     // ------
     
@@ -121,13 +122,14 @@ void Draw(int shaderProgram, VertexBuffer * vb) {
 
     // draw our first triangle
     glUseProgram(shaderProgram);
-    glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+    va.Bind();
+    //glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //glBindVertexArray(0); // no need to unbind it every time 
     
     Update_Vertices();
-    vb->setData(&vertices, sizeof(vertices));
+    vb.setData(&vertices, sizeof(vertices));
 }
 
 
@@ -151,28 +153,6 @@ void Normal_Distribution(float * sample) {
     do {
         *sample = d(gen);
     } while (*sample > 1.0 || *sample < -1.0);
-}
-
-void setupVertexData() {
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS stored in the VAO; keep the EBO bound.
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
-
-
-    // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void deAllocateResources() {
