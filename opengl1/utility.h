@@ -148,7 +148,7 @@ void Normal_Distribution(float * sample) {
     static const float variance = distribution(generator);
 
     // instance of class std::normal_distribution with specific mean and stddev
-    std::normal_distribution<float> d(mean, variance);
+    static std::normal_distribution<float> d(mean, variance);
 
     float x = d(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
