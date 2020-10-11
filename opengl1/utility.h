@@ -149,10 +149,8 @@ void Normal_Distribution(float * sample) {
     // instance of class std::normal_distribution with specific mean and stddev
     std::normal_distribution<float> d(mean, variance);
 
-    // get random number with normal distribution using gen as random source
-    do {
-        *sample = d(gen);
-    } while (*sample > 1.0 || *sample < -1.0);
+    float x = d(gen);
+    *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
 }
 
 void deAllocateResources() {
