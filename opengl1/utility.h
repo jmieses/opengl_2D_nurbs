@@ -144,12 +144,8 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
 
 void Normal_Distribution(float * sample) {
 
-
-
     static const float mean = distribution(generator);
     static const float variance = distribution(generator);
-
-
 
     // instance of class std::normal_distribution with specific mean and stddev
     std::normal_distribution<float> d(mean, variance);
