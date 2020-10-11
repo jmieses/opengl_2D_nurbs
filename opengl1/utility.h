@@ -9,13 +9,15 @@
 
 #include "VertexBuffer.h"
 #include "VertexArray.h"
-/*Size of vertices array, contains the number of points to displayed*/
-const unsigned int VERTICES_SIZE = 12;
 
-std::random_device rd;
 
-// Mersenne twister PRNG, initialized with seed from previous random device instance
-std::mt19937 gen(rd());
+
+/************************************************************************************************************************************/
+/* Constant Values                                                                                                                  */
+/************************************************************************************************************************************/
+
+const unsigned int VERTICES_SIZE = 12;                          /*Size of vertices array, contains the number of points to displayed*/
+
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -30,13 +32,17 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\n\0";
 
-// build and compile our shader program
-// ------------------------------------
-// vertex shader
 
+
+/************************************************************************************************************************************/
+/* Global variables                                                                                                                 */
+/************************************************************************************************************************************/
 int success;
 char infoLog[512];
-
+std::random_device rd;
+std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
+std::default_random_engine generator;
+std::uniform_real_distribution<double> distribution(0.0, 1.0);
 unsigned int VBO, VAO, EBO;
 
 std::array<float, VERTICES_SIZE> vertices {
@@ -51,7 +57,9 @@ unsigned int indices[] = {  // note that we start from 0!
 	1, 2, 3   // second Triangle
 };
 
-/*Local Function Definitions*/
+/************************************************************************************************************************************/
+/* Local function definitions                                                                                                       */
+/************************************************************************************************************************************/
 void Normal_Distribution(float*);
 void Update_Vertices(void);
 void Draw(int, VertexArray&, VertexBuffer&);
@@ -135,14 +143,11 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
 
 
 void Normal_Distribution(float * sample) {
-    float mean;
-    float variance;
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
-    mean = distribution(generator);
-    variance = distribution(generator);
+
+    static const float mean = distribution(generator);
+    static const float variance = distribution(generator);
 
 
 
