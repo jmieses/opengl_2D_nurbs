@@ -39,10 +39,7 @@ const char* fragmentShaderSource = "#version 330 core\n"
 /************************************************************************************************************************************/
 int success;
 char infoLog[512];
-std::random_device rd;
-std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
-std::default_random_engine generator;
-std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
 unsigned int VBO, VAO, EBO;
 
 std::array<float, VERTICES_SIZE> vertices {
@@ -144,13 +141,17 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
 
 void Normal_Distribution(float * sample) {
 
+    static std::random_device rd;
+    static std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
+    static std::default_random_engine generator;
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
     static const float mean = distribution(generator);
     static const float variance = distribution(generator);
+                                            
+    static std::normal_distribution<float> normal_distribution(mean, variance);               // instance of class std::normal_distribution with specific mean and stddev
 
-    // instance of class std::normal_distribution with specific mean and stddev
-    static std::normal_distribution<float> d(mean, variance);
-
-    float x = d(gen);
+    float x = normal_distribution(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
 }
 
