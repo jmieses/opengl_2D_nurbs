@@ -137,9 +137,9 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
     vb.setData(&vertices, sizeof(vertices));
 }
 
+using Ptr2Float = float*;
 
-
-void Normal_Distribution(float * sample) {
+void Normal_Distribution(Ptr2Float sample) {
 
     static std::random_device rd;
     static std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
@@ -147,9 +147,9 @@ void Normal_Distribution(float * sample) {
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
     static const float mean = distribution(generator);
-    static const float variance = distribution(generator);
+    static const float std_dev = distribution(generator);
                                             
-    static std::normal_distribution<float> normal_distribution(mean, variance);               // instance of class std::normal_distribution with specific mean and stddev
+    static std::normal_distribution<float> normal_distribution(mean, std_dev);               // instance of class std::normal_distribution with specific mean and stddev
 
     float x = normal_distribution(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
