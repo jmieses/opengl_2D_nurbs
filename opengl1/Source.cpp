@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "utility.h"
@@ -8,6 +9,7 @@
 #include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "Error_Handling.h"
+#include "Shader.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -16,7 +18,7 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-// 1. check for branch visibilty in random_number_gen branch
+
 
 int main()
 {
@@ -55,36 +57,33 @@ int main()
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(MessageCallback, 0);
 
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    int shaderProgram = glCreateProgram();
-
-    buildShader(vertexShader, fragmentShader);
-
-    linkShader(vertexShader, fragmentShader, shaderProgram);
-    
-    VertexArray vertex_array;
-
-    VertexBuffer vertex_buffer(&vertices, sizeof(vertices));
-
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    vertex_array.AddBuffer(vertex_buffer, layout);
-
-	IndexBuffer index_buffer(indices, 6);
+    Shader shader;
 
     std::cout << glGetString(GL_VERSION) << '\n';
 
+    VertexArray dynamic_vertex_array;
 
+    VertexBuffer dynamic_vertex_buffer(vertices, false);
+    VertexBufferLayout dynamic_layout;
+    
+    dynamic_layout.Push<float>(3);
+
+    dynamic_vertex_array.AddBuffer(dynamic_vertex_buffer, dynamic_layout);
+
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
     // render loop
     // -----------
+
     while (!glfwWindowShouldClose(window))
     {
         // input
         // -----
         processInput(window);
 
-        Draw(shaderProgram, vertex_array, vertex_buffer);
+        //glUseProgram(proShader);
+
+        DynamicDraw(vertices, dynamic_vertex_array, dynamic_vertex_buffer, shader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -120,4 +119,4 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-}
+} 

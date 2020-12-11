@@ -6,10 +6,11 @@
 #include <iostream>
 #include <array>
 #include <random>
+#include <vector>
 
 #include "VertexBuffer.h"
 #include "VertexArray.h"
-
+#include "Shader.h"
 
 
 /************************************************************************************************************************************/
@@ -19,40 +20,22 @@
 const unsigned int VERTICES_SIZE = 12;                          /*Size of vertices array, contains the number of points to displayed*/
 
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
-
 
 
 /************************************************************************************************************************************/
 /* Global variables                                                                                                                 */
 /************************************************************************************************************************************/
-int success;
-char infoLog[512];
+// static int success;
+// static char infoLog[512];
 
 unsigned int VBO, VAO, EBO;
 
-std::array<float, VERTICES_SIZE> vertices {
+std::vector<float> vertices {
           0.5f,  0.5f, 0.0f,  // top right
           0.5f, -0.5f, 0.0f,  // bottom right
          -0.5f, -0.5f, 0.0f,  // bottom left
          -0.5f,  0.5f, 0.0f   // top left 
      };
-
-unsigned int indices[] = {  // note that we start from 0!
-	0, 1, 3,  // first Triangle
-	1, 2, 3   // second Triangle
-};
 
 /************************************************************************************************************************************/
 /* Local function definitions                                                                                                       */
@@ -65,57 +48,16 @@ void Update_Vertices(void) {
 
     double current_time = glfwGetTime();
     static double old_time = current_time;
+    static constexpr float TIME_LAPSE = 5.0;
   
-    if (current_time != 0.0 && (current_time - old_time) > 5.0) {
-        for (int i = 0; i < VERTICES_SIZE; i++) {
+    if (current_time != 0.0 && (current_time - old_time) > TIME_LAPSE) {
+        for (int i = 0; i < vertices.size(); i++) {
             float sample;
             Normal_Distribution(&sample);
             vertices.at(i) = sample;
         }
         old_time = current_time;
     }
-}
-
-void buildShader(int vertexShader, int fragmentShader) {
-    
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
-    
-    
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-   
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-}
-
-void linkShader(int vertexShader, int fragmentShader, int shaderProgram) {
-    // link shaders
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 }
 
 void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
@@ -130,16 +72,29 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
     va.Bind();
     //glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
     //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    //glBindVertexArray(0); // no need to unbind it every time 
+    glPointSize(10);
+    glDrawArrays(GL_POINTS, 0, 6);
+
+    /*No use of glDrawElements here since we're only drawing points and do not care about order of point drawing. Not use of index buffer. */
+    //glDrawElements(GL_POINTS, 6, GL_UNSIGNED_INT, 0);
     
     Update_Vertices();
-    vb.setData(&vertices, sizeof(vertices));
+    vb.setData(&vertices.front(), vertices.size() * sizeof(float));
 }
 
-using Ptr2Float = float*;
+void DynamicDraw(std::vector<float> vertices, VertexArray& va, VertexBuffer& vb, Shader& shader){
 
-void Normal_Distribution(Ptr2Float sample) {
+        glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        vb.BindDynamic(vertices);
+        shader.Use();
+        va.Bind();
+        glPointSize(10);
+        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
+}
+
+void Normal_Distribution(float * sample) {
 
     static std::random_device rd;
     static std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
@@ -154,6 +109,20 @@ void Normal_Distribution(Ptr2Float sample) {
     float x = normal_distribution(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
 }
+
+// void deCasteljau(){
+//     std::vector<float> temp_control_points(vertices);
+
+//     for(unsigned int i = 1; i < temp_control_points.size(); i++){
+//         for(unsigned int j = 0; j < temp_control_points.size() - i; j++){
+//             temp_control_points[j].x = (1.0 - u) * temp_control_points[j].x + u * temp_control_points[j + 1].x;
+//             temp_control_points[j].y = (1.0 - u) * temp_control_points[j].y + u * temp_control_points[j + 1].y;
+//         }
+//     }
+
+//     curve.C[0].x = temp_control_points[0].x;
+//     curve.C[0].y = temp_control_points[0].y;
+// }
 
 void deAllocateResources() {
 

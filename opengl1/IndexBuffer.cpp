@@ -31,7 +31,3 @@ void IndexBuffer::setData(const void* vertices, unsigned int size_of_vertices)
 	glBufferData(GL_ARRAY_BUFFER, size_of_vertices, vertices, GL_DYNAMIC_DRAW);
 }
 
-void IndexBuffer::setID(unsigned int id)
-{
-	m_index_buffer_id = id;
-}

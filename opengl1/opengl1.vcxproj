@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -161,10 +162,15 @@
   <ItemGroup>
     <ClInclude Include="Error_Handling.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment_shader.fs" />
+    <None Include="vertex_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
