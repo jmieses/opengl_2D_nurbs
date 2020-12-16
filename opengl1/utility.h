@@ -25,16 +25,15 @@ const unsigned int VERTICES_SIZE = 12;                          /*Size of vertic
 /************************************************************************************************************************************/
 /* Global variables                                                                                                                 */
 /************************************************************************************************************************************/
-// static int success;
-// static char infoLog[512];
 
 unsigned int VBO, VAO, EBO;
 
 std::vector<float> vertices {
-        -0.9f, -0.5f, 0.0f,  // left 
-        -0.0f, -0.5f, 0.0f,  // right
-        -0.45f, 0.5f, 0.0f,  // top 
-         0.45f, 0.5f, 0.0f
+        -0.9f, -0.5f, 0.0f,  
+        -0.0f, -0.5f, 0.0f,  
+        -0.45f, 0.5f, 0.0f,  
+         0.45f, 0.5f, 0.0f,
+         0.25f, 0.25f, 0.0f
     };
 
 std::vector<float> vertices_2 { // place holder vector to initialize OpenGL pipeline
@@ -89,10 +88,7 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
     vb.setData(&vertices.front(), vertices.size() * sizeof(float));
 }
 
-void Dynamic_Draw(std::vector<float>& points, VertexArray& va, VertexBuffer& vb, Shader& shader){
-
-    // glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
-    // glClear(GL_COLOR_BUFFER_BIT);
+void Dynamic_Draw(const std::vector<float>& points, const VertexArray& va, const VertexBuffer& vb, const Shader& shader){
 
     shader.Use();
     vb.BindDynamic(points);
@@ -119,20 +115,6 @@ void Normal_Distribution(float * sample) {
     float x = normal_distribution(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function
 }
-
-// void deCasteljau(){
-//     std::vector<float> temp_control_points(vertices);
-
-//     for(unsigned int i = 1; i < temp_control_points.size(); i++){
-//         for(unsigned int j = 0; j < temp_control_points.size() - i; j++){
-//             temp_control_points[j].x = (1.0 - u) * temp_control_points[j].x + u * temp_control_points[j + 1].x;
-//             temp_control_points[j].y = (1.0 - u) * temp_control_points[j].y + u * temp_control_points[j + 1].y;
-//         }
-//     }
-
-//     curve.C[0].x = temp_control_points[0].x;
-//     curve.C[0].y = temp_control_points[0].y;
-// }
 
 void deAllocateResources() {
 

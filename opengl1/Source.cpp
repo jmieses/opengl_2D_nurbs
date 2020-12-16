@@ -1,9 +1,13 @@
 #include <windows.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "utility.h"
 #include <iostream>
 
+
+/************************************************************************************************************************************/
+/* Local Includes                                                                                                                   */
+/************************************************************************************************************************************/
+#include "utility.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexBufferLayout.h"
@@ -20,6 +24,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 
+ window
 
 int main()
 {
