@@ -31,11 +31,17 @@ const unsigned int VERTICES_SIZE = 12;                          /*Size of vertic
 unsigned int VBO, VAO, EBO;
 
 std::vector<float> vertices {
-          0.5f,  0.5f, 0.0f,  // top right
-          0.5f, -0.5f, 0.0f,  // bottom right
-         -0.5f, -0.5f, 0.0f,  // bottom left
-         -0.5f,  0.5f, 0.0f   // top left 
-     };
+        -0.9f, -0.5f, 0.0f,  // left 
+        -0.0f, -0.5f, 0.0f,  // right
+        -0.45f, 0.5f, 0.0f,  // top 
+         0.45f, 0.5f, 0.0f
+    };
+
+std::vector<float> vertices_2 { // place holder vector to initialize OpenGL pipeline
+        0.0f, 0.0f, 0.0f,  
+        0.0f, 0.0f, 0.0f,  
+        0.0f, 0.0f, 0.0f   
+    };
 
 /************************************************************************************************************************************/
 /* Local function definitions                                                                                                       */
@@ -51,6 +57,7 @@ void Update_Vertices(void) {
     static constexpr float TIME_LAPSE = 5.0;
   
     if (current_time != 0.0 && (current_time - old_time) > TIME_LAPSE) {
+
         for (int i = 0; i < vertices.size(); i++) {
             float sample;
             Normal_Distribution(&sample);
@@ -82,29 +89,32 @@ void Draw(int shaderProgram, VertexArray& va, VertexBuffer& vb) {
     vb.setData(&vertices.front(), vertices.size() * sizeof(float));
 }
 
-void DynamicDraw(std::vector<float> vertices, VertexArray& va, VertexBuffer& vb, Shader& shader){
+void Dynamic_Draw(std::vector<float>& points, VertexArray& va, VertexBuffer& vb, Shader& shader){
 
-        glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    // glClearColor(0.1f, 0.3f, 0.3f, 1.0f);
+    // glClear(GL_COLOR_BUFFER_BIT);
 
-        vb.BindDynamic(vertices);
-        shader.Use();
-        va.Bind();
-        glPointSize(10);
-        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
+    shader.Use();
+    vb.BindDynamic(points);
+
+    va.Bind();
+
+    glDrawArrays(GL_POINTS, 0, points.size() / 3);
+
+    Update_Vertices();
 }
 
 void Normal_Distribution(float * sample) {
 
     static std::random_device rd;
-    static std::mt19937 gen(rd());                                         // Mersenne twister PRNG, initialized with seed from previous random device instance
+    static std::mt19937 gen(rd());  // Mersenne twister PRNG, initialized with seed from previous random device instance
     static std::default_random_engine generator;
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
     static const float mean = distribution(generator);
     static const float std_dev = distribution(generator);
                                             
-    static std::normal_distribution<float> normal_distribution(mean, std_dev);               // instance of class std::normal_distribution with specific mean and stddev
+    static std::normal_distribution<float> normal_distribution(mean, std_dev);  // instance of class std::normal_distribution with specific mean and stddev
 
     float x = normal_distribution(gen);
     *sample = x / (1 + std::abs(x)); // *sample in range [-1, 1] using sigmoid function

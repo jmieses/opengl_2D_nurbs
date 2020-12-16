@@ -5,7 +5,6 @@
 
 class Shader {
 public:
-	Shader();
 	Shader(const char* vertex_shader_path, const char* fragment_shader_path);
 
 	void Use() const;
@@ -13,7 +12,7 @@ public:
 private:
 	unsigned int shader_id;
 	void CheckCompilerErrors(unsigned int shader, std::string type);
-	void BuildShader(int, int);
+	void BuildShader(int, int, const char*, const char*);
 	void LinkShader(int, int , int);
 };
 #endif

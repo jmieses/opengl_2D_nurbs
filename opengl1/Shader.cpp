@@ -1,7 +1,6 @@
 #include "Shader.h"
 #include <glad/glad.h>
 
-
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -19,14 +18,27 @@ static const char* fragment_shader_source = "#version 330 core\n"
 "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\n\0";
 
-Shader::Shader(){
-	int verShader = glCreateShader(GL_VERTEX_SHADER);
-    int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    shader_id = glCreateProgram();
+static const char* vertex_shader_source_2 = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+static const char* fragment_shader_source_2 = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n\0";
 
-    BuildShader(verShader, fragShader);
-    LinkShader(verShader, fragShader, shader_id);
-}
+// Shader::Shader(const char* vertex_shader, const char* fragment_shader){
+// 	int verShader = glCreateShader(GL_VERTEX_SHADER);
+//     int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+//     shader_id = glCreateProgram();
+
+//     BuildShader(verShader, fragShader, vertex_shader, fragment_shader);
+//     LinkShader(verShader, fragShader, shader_id);
+// }
 
 Shader::Shader(const char * vertex_shader_path, const char * fragment_shader_path){
 	// 1. Retrieve the vertex/fragment source code from the file path.
@@ -75,7 +87,7 @@ Shader::Shader(const char * vertex_shader_path, const char * fragment_shader_pat
 	glAttachShader(shader_id, vertex);
 	glAttachShader(shader_id, fragment);
 	glLinkProgram(shader_id);
-	CheckCompilerErrors(shader_id, "PROGRAM");
+	//CheckCompilerErrors(shader_id, "PROGRAM");
 	// delete shaders after the've been linked.
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
@@ -91,9 +103,9 @@ void Shader::CheckCompilerErrors(unsigned int shader, std::string type){
 			std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << '\n' << infoLog << "n -- ------------------------------ --\n";
 		}
 	}else{
-		glGetShaderiv(shader, GL_LINK_STATUS, &success);
+		glGetProgramiv(shader, GL_LINK_STATUS, &success);
 		if(!success){
-			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
 			std::cout << "ERROR::SHADER_LINKING_ERROR of type: " << type << '\n' << infoLog << "n -- ------------------------------ --\n";
 		}
 	}
@@ -103,11 +115,11 @@ void Shader::Use() const{
 	glUseProgram(shader_id);
 }
 
-void Shader::BuildShader(int vertexShader, int fragmentShader) {
+void Shader::BuildShader(int vertexShader, int fragmentShader, const char* vertex_shader, const char* fragment_shader) {
     int success;
     char infoLog[512];
 
-    glShaderSource(vertexShader, 1, &vertex_shader_source, NULL);
+    glShaderSource(vertexShader, 1, &vertex_shader, NULL);
     glCompileShader(vertexShader);
     // check for shader compile errors
     
@@ -120,7 +132,7 @@ void Shader::BuildShader(int vertexShader, int fragmentShader) {
     }
     // fragment shader
    
-    glShaderSource(fragmentShader, 1, &fragment_shader_source, NULL);
+    glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
     glCompileShader(fragmentShader);
     // check for shader compile errors
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
