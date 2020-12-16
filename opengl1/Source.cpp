@@ -24,8 +24,6 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 
- window
-
 int main()
 {
     // glfw: initialize and configure
@@ -92,9 +90,8 @@ int main()
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        std::vector<float>tmp(curve.deCasteljau(vertices));
         glPointSize(2);
-        Dynamic_Draw(tmp, dynamic_vertex_array_2, dynamic_vertex_buffer_2, shader_2);
+        Dynamic_Draw(curve.deCasteljau(vertices), dynamic_vertex_array_2, dynamic_vertex_buffer_2, shader_2);
         glPointSize(5);
         Dynamic_Draw(vertices, dynamic_vertex_array, dynamic_vertex_buffer, shader);
 
