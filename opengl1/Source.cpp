@@ -82,7 +82,6 @@ int main()
     Curve curve;
     // render loop
     // -----------
-    glPointSize(10);
     while (!glfwWindowShouldClose(window))
     {
         // input
