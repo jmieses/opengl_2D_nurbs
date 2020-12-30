@@ -1,6 +1,5 @@
 #include "Curve.h"
 
-
 const std::vector<float>& Curve::deCasteljau(std::vector<float>& ctrl_pts){
 	Vector_To_Points(ctrl_pts);
 
@@ -37,12 +36,13 @@ const std::vector<float>& Curve::Bspline(std::vector<float>& ctrl_pts){
 		int span = this->Find_Span(u);
 		Basis_Funcs(span, u);
 		float x = 0., y = 0.;
-		for(int i = 0; i < p + 1; i++){
-			x = x + m_bspline_basis_funcs[i] * m_ctrl_pts[span - p + i].x;
-			y = y + m_bspline_basis_funcs[i] * m_ctrl_pts[span - p + i].y;
+		for(int i = 0; i < degree + 1; i++){
+			x = x + m_bspline_basis_funcs[i] * m_ctrl_pts[span - degree + i].x;
+			y = y + m_bspline_basis_funcs[i] * m_ctrl_pts[span - degree + i].y;
 		}
 		m_curve.emplace_back(x);
 		m_curve.emplace_back(y);
+		m_curve.emplace_back(0.);
 	}
 
 	return m_curve;
@@ -67,9 +67,9 @@ void Curve::Gen_Knot_Vector(){
 int Curve::Find_Span(float& u){
 	int n = m_knot_vector.size() - 1;
 
-	if(u == m_knot_vector.end()) return n;
+	if(u == m_knot_vector.back()) return n;
 
-	int low = degree, high = n - 1;
+	int low = degree, high = n + 1;
 
 	int mid = (low + high) / 2;
 
@@ -81,24 +81,24 @@ int Curve::Find_Span(float& u){
 	return mid;
 }
 
-void Curve::Basis_Funcs(unsigned int span, float knot){
+void Curve::Basis_Funcs(const int& span,const float& knot){
 	if(!m_bspline_basis_funcs.empty()) m_bspline_basis_funcs.clear();
 
 	m_bspline_basis_funcs.emplace_back(1.);
 
-	std::vector<float> left(degree, 1);
-	std::vector<float> right(degree, 1);
+	std::vector<float> left(degree + 1, 1);
+	std::vector<float> right(degree + 1, 1);
 
-	for(int j = 1; j < degree; j++){
+	for(int j = 1; j < degree + 1; j++){
 		left[j] = knot - m_knot_vector[span + 1 - j];
-		right[j] = m_knot_vector[span + j] - u;
-		float saved = 0.;
+		right[j] = m_knot_vector[span + j] - knot;
+		float saved = 0.;   
 		for(int r = 0; r < j; r++){
 			float temp = m_bspline_basis_funcs[r] / (right[r+1] + left[j-r]);
 			m_bspline_basis_funcs[r] = saved + right[r+1] * temp;
 			saved = left[j-r] * temp;
 		}
-	m_bspline_basis_funcs[j] = saved;
+	m_bspline_basis_funcs.emplace_back(saved);
 	}
 }
 
