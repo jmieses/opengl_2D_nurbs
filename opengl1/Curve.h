@@ -30,7 +30,6 @@ private:
 	std::vector<float> m_knot_vector;
 	std::vector<float> m_weight_vector;
 	
-	//inline void Scale_Points(std::vector<Point>*, std::vector<float>&);
 	inline void Scale_Points();
 	const std::vector<float>& NURBS_Subroutine();
 	float m_weight_sum;
