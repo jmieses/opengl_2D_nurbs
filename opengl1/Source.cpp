@@ -90,7 +90,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glPointSize(2);
-        Dynamic_Draw(curve.Bspline(vertices), dynamic_vertex_array_2, dynamic_vertex_buffer_2, shader_2);
+        Dynamic_Draw(curve.NURBS(vertices), dynamic_vertex_array_2, dynamic_vertex_buffer_2, shader_2);
         glPointSize(5);
         Dynamic_Draw(vertices, dynamic_vertex_array, dynamic_vertex_buffer, shader);
 

@@ -13,12 +13,13 @@ public:
 	Curve() = default;
 	const std::vector<float>& deCasteljau(std::vector<float>& ctrl_pts);
 	const std::vector<float>& Bspline(std::vector<float>& ctrl_pts);
+	const std::vector<float>& NURBS(std::vector<float>& ctrl_pts);
 private:
 	void deCasteljau_Subroutine(float u);
 	void Vector_To_Points(std::vector<float>& ctrl_pts);
 	std::vector<float> m_curve;
 	std::vector<Point> m_ctrl_pts;
-	float m_res = (float)0.001;
+	float m_res = 0.001f;
 
 	void Gen_Knot_Vector();
 	int Find_Span(float&);
@@ -27,6 +28,12 @@ private:
 	int degree = 3;
 	std::vector<float> m_bspline_basis_funcs;
 	std::vector<float> m_knot_vector;
+	std::vector<float> m_weight_vector;
 	
+	//inline void Scale_Points(std::vector<Point>*, std::vector<float>&);
+	inline void Scale_Points();
+	const std::vector<float>& NURBS_Subroutine();
+	float m_weight_sum;
+	float m_bspline_basis_funcs_sum;
 };
 #endif
